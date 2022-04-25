@@ -44,8 +44,6 @@
 
                 <div class="form-group">
                     <label class="form-label" for="type">What type?</label>
-                    <!-- TODO Create select element, use v-model to connect to the types -->
-                    <!-- TODO Use v-for to create option elements, one for each type -->
                     <select class="form-control" v-model="type">
                         <option v-for="type in types">{{ type }}</option>
                     </select>
@@ -56,19 +54,24 @@
                 </div>
 
                 <div class="form-check-inline">
-                    <!-- TODO v-model media -->
                     <input id="media1" class="form-check-input" type="radio" value="Traditional" v-model="medium">
                     <label class="form-check-label" for="media1">Traditional</label>
                 </div>
 
                 <div class="form-check-inline">
-                    <!-- TODO v-model media -->
                     <input id="media2" class="form-check-input" type="radio" value="Digital" v-model="medium">
                     <label class="form-check-label" for="media2">Digital</label>
                 </div>
+                <div class="form-group">
+                    <input id="completed" type="checkbox" value="Completed" v-model="completed">
+                    <label class="form-check-label" for="completed">Completed</label>
+                </div>
+                <label class="form-label" for="notes">Notes</label>
+                <div class="form-group">
+                    <input id="notes" type="text" value="notes" v-model="notes">
+                </div>
 
                 <div>
-                    <!-- TODO Add v-on:click -->
                     <button class="btn btn-primary mt-2" type="button" v-on:click="submit">Add record</button>
                 </div>
                 
@@ -89,6 +92,8 @@
                             <th>How many hours?</th>
                             <th>Type</th>
                             <th>Media</th>
+                            <th>Completed?</th>
+                            <th>Notes</th>
                         </tr>
                         <tr v-for="record in activityRecords"
                             v-bind:class="record.type">
@@ -96,6 +101,8 @@
                             <td>{{record.hours}}</td>
                             <td>{{record.type}}</td>
                             <td>{{record.medium}}</td>
+                            <td>{{completionText(record.completed)}}</td>
+                            <td>{{record.notes}}</td>
                         </tr>
                     </table>
                 </div>
@@ -126,6 +133,8 @@
                 hours: 1,
                 type: '',
                 medium: 'Traditional',
+                completed: false,
+                notes: '',
 
                 types: ['Sketching', 'Drawing', 'Painting'],
 
@@ -156,7 +165,9 @@
                         date: date,
                         hours: this.hours,
                         type: this.type,
-                        medium: this.medium
+                        medium: this.medium,
+                        completed: this.completed,
+                        notes: this.notes
                     }
                     this.activityRecords.push(record)
 
@@ -167,7 +178,12 @@
             },
             shortDate(date){
                 return new Intl.DateTimeFormat('en-US', {timeZone: 'UTC'}).format(date)
-            }
+            },
+            completionText(completed){
+                if (completed) {
+                    return 'Complete'
+                } else {return 'Not Complete'}
+            },
         },
         computed: {
             totalRecordsMessage() {
